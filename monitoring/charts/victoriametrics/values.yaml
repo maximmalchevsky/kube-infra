@@ -12,7 +12,7 @@ victoria-metrics-single:
       loggerLevel: "INFO"
     persistentVolume:
       storageClass: "nfs-client"
-      size: "10Gi"
+      size: "5Gi"
     resources:
       requests:
         cpu: 200m
