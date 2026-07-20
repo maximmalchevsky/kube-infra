@@ -6,7 +6,7 @@ victoria-metrics-single:
     create: false
   server:
     priorityClassName: "low-priority"
-    retentionPeriod: 6h
+    retentionPeriod: 7d
     extraArgs:
       selfScrapeInterval: "15s"
       loggerLevel: "INFO"
