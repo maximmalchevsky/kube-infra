@@ -11,8 +11,8 @@ victoria-metrics-single:
       selfScrapeInterval: "15s"
       loggerLevel: "INFO"
     persistentVolume:
-      storageClass: "nfs-client"
-      size: "5Gi"
+      storageClassName: "nfs-client"
+      size: "10Gi"
     resources:
       requests:
         cpu: 200m
