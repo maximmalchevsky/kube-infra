@@ -9,8 +9,8 @@ victoria-metrics-agent:
   fullnameOverride: "vmagent-sys"
 
   # Это параметр зависит от установки victoriametrics
-  remoteWriteUrls:
-    - http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write
+  remoteWrite:
+    - url: http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write
 
   service:
     enabled: true
@@ -31,7 +31,7 @@ victoria-metrics-agent:
         hosts:
           - vmagent.maxim.local
     pathType: Prefix
-    ingressClassName: traefik
+    ingressClassName: system-ingress
 
   resources:
     requests:
@@ -58,8 +58,8 @@ victoria-metrics-agent:
         - role: endpoints
       relabel_configs:
         - source_labels: [ __meta_kubernetes_endpoints_name ]
-          regex: 'node-exporter-prometheus-node-exporter'
+          regex: 'nexporter-prometheus-node-exporter'
           action: keep
     - job_name: 'kube-state-metrics'
       static_configs:
-        - targets: [ 'kube-state-metrics:8080' ]
+        - targets: [ 'ksm-kube-state-metrics.monitoring.svc.cluster.local:8080' ]
