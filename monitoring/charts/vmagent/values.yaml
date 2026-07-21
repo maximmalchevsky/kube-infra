@@ -9,8 +9,8 @@ victoria-metrics-agent:
   fullnameOverride: "vmagent-sys"
 
   # Это параметр зависит от установки victoriametrics
-  remoteWriteUrls:
-    - http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write
+  remoteWrite:
+    - url: http://victoriametrics-victoria-metrics-single-server:8428/api/v1/write
 
   service:
     enabled: true
