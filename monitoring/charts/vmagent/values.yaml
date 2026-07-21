@@ -31,7 +31,7 @@ victoria-metrics-agent:
         hosts:
           - vmagent.maxim.local
     pathType: Prefix
-    ingressClassName: system-ingress
+    ingressClassName: traefik
 
   resources:
     requests:
@@ -58,8 +58,8 @@ victoria-metrics-agent:
         - role: endpoints
       relabel_configs:
         - source_labels: [ __meta_kubernetes_endpoints_name ]
-          regex: 'nexporter-prometheus-node-exporter'
+          regex: 'node-exporter-prometheus-node-exporter'
           action: keep
     - job_name: 'kube-state-metrics'
       static_configs:
-        - targets: [ 'ksm-kube-state-metrics.monitoring.svc.cluster.local:8080' ]
+        - targets: [ 'kube-state-metrics:8080' ]
