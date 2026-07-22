@@ -1,9 +1,10 @@
+
+
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: vmalert
-  namespace: monitoring
   labels:
     app.kubernetes.io/component: server
     app.kubernetes.io/instance: monitoring
