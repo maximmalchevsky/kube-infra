@@ -14,6 +14,14 @@ ingress:
       secretName: grafana-tls
 
 grafana:
+  initChownData:
+    enabled: false
+  podSecurityContext:
+    fsGroup: 472
+  securityContext:
+    runAsUser: 472
+    runAsGroup: 472
+    
   revisionHistoryLimit: 3
   testFramework:
     enabled: false
