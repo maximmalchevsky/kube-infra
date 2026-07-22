@@ -1,6 +1,6 @@
 revisionHistoryLimit: 3
 
-nameOverride: "alertmanger"
+nameOverride: "alertmanager"
 fullnameOverride: "alertmanager"
 
 
