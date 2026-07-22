@@ -33,7 +33,7 @@ resources:
 persistence:
   enabled: true
 
-  storageClass: nfs-client
+  storageClassName: nfs-client
   accessModes:
     - ReadWriteOnce
   size: 50Mi
