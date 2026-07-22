@@ -1,11 +1,16 @@
+revisionHistoryLimit: 3
 
 nameOverride: "alertmanger"
 fullnameOverride: "alertmanger"
 
+
+priorityClassName: "low-priority"
+
 ingress:
-  enabled: true
-  className: traefik
-  annotations: {}
+  enabled: false
+  className: "traefik"
+  annotations:
+    cert-manager.io/cluster-issuer: dev-ca-issuer
   hosts:
     - host: am.maxim.local
       paths:
@@ -14,8 +19,7 @@ ingress:
   tls:
     - hosts:
         - am.maxim.local
-      secretName: alertmanager-tls
-
+      secretName: am-tls
 
 resources:
   limits:
@@ -25,6 +29,7 @@ resources:
     cpu: 10m
     memory: 32Mi
 
+
 persistence:
   enabled: true
 
@@ -33,6 +38,8 @@ persistence:
     - ReadWriteOnce
   size: 50Mi
 
+
 config:
+  enabled: true
   global:
     resolve_timeout: 5m
