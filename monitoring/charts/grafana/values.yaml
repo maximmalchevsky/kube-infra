@@ -18,7 +18,7 @@ grafana:
   testFramework:
     enabled: false
   ingress:
-    enabled: false
+    enabled: true
   resources:
     limits:
       cpu: 500m
