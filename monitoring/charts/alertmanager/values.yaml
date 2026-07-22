@@ -1,7 +1,7 @@
 revisionHistoryLimit: 3
 
 nameOverride: "alertmanger"
-fullnameOverride: "alertmanger"
+fullnameOverride: "alertmanager"
 
 
 priorityClassName: "low-priority"
@@ -33,7 +33,7 @@ resources:
 persistence:
   enabled: true
 
-  storageClassName: nfs-client
+  storageClass: nfs-client
   accessModes:
     - ReadWriteOnce
   size: 50Mi
