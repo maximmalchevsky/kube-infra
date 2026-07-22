@@ -6,7 +6,7 @@ grafana:
 
   ingress:
     enabled: true
-    ingressClassName: traefik   # или system-ingress, если такой IngressClass действительно есть
+    ingressClassName: traefik
     annotations:
       cert-manager.io/cluster-issuer: dev-ca-issuer
     hosts:
@@ -17,6 +17,16 @@ grafana:
       - secretName: grafana-tls
         hosts:
           - grafana.maxim.local
+
+  podSecurityContext:
+    fsGroup: 472
+
+  securityContext:
+    runAsUser: 472
+    runAsGroup: 472
+
+  initChownData:
+    enabled: false
 
   resources:
     limits:
