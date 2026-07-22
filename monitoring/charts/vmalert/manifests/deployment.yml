@@ -47,7 +47,7 @@ spec:
             - --httpListenAddr=:8880
             - --loggerFormat=json
             - --notifier.url=http://alertmanager:9093
-            - --rule=/config
+            - --rule=/config/*.yaml
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

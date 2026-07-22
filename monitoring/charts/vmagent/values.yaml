@@ -19,7 +19,7 @@ victoria-metrics-agent:
   ingress:
     enabled: true
     annotations:
-      certmanager.k8s.io/cluster-issuer: dev-ca-issuer
+      cert-manager.io/cluster-issuer: dev-ca-issuer
 
     extraLabels: { }
     hosts:
