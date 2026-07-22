@@ -1,45 +1,42 @@
-revisionHistoryLimit: 3
+alertmanager:
+  revisionHistoryLimit: 3
 
-nameOverride: "alertmanager"
-fullnameOverride: "alertmanager"
+  nameOverride: "alertmanager"
+  fullnameOverride: "alertmanager"
 
+  priorityClassName: "low-priority"
 
-priorityClassName: "low-priority"
+  ingress:
+    enabled: true
+    className: "traefik"
+    annotations:
+      cert-manager.io/cluster-issuer: dev-ca-issuer
+    hosts:
+      - host: am.maxim.local
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - hosts:
+          - am.maxim.local
+        secretName: am-tls
 
-ingress:
-  enabled: true
-  className: "traefik"
-  annotations:
-    cert-manager.io/cluster-issuer: dev-ca-issuer
-  hosts:
-    - host: am.maxim.local
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - hosts:
-        - am.maxim.local
-      secretName: am-tls
+  resources:
+    limits:
+      cpu: 100m
+      memory: 256Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
 
-resources:
-  limits:
-    cpu: 100m
-    memory: 256Mi
-  requests:
-    cpu: 10m
-    memory: 32Mi
+  persistence:
+    enabled: true
+    storageClass: nfs-client
+    accessModes:
+      - ReadWriteOnce
+    size: 50Mi
 
-
-persistence:
-  enabled: true
-
-  storageClass: nfs-client
-  accessModes:
-    - ReadWriteOnce
-  size: 50Mi
-
-
-config:
-  enabled: true
-  global:
-    resolve_timeout: 5m
+  config:
+    enabled: true
+    global:
+      resolve_timeout: 5m
