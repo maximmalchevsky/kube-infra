@@ -7,7 +7,7 @@ fullnameOverride: "alertmanger"
 priorityClassName: "low-priority"
 
 ingress:
-  enabled: false
+  enabled: true
   className: "traefik"
   annotations:
     cert-manager.io/cluster-issuer: dev-ca-issuer
