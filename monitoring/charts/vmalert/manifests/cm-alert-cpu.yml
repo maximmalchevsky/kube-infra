@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: vmalert-rules-config-cpu
-  namespace: default
+  namespace: monitoring
   labels:
     app.kubernetes.io/component: server
     app.kubernetes.io/instance: monitoring
