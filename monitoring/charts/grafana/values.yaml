@@ -1,44 +1,42 @@
 ingress:
   enabled: true
-  ingressClassName: system-ingress
+  ingressClassName: traefik
   annotations:
-    certmanager.k8s.io/cluster-issuer: dev-ca-issuer
+    cert-manager.io/cluster-issuer: dev-ca-issuer
   hosts:
-    - host: grafana.maxim.local
-      paths:
-        - path: /
-          pathType: Prefix
+    - grafana.maxim.local
+  path: /
+  pathType: Prefix
   tls:
-    - hosts:
+    - secretName: grafana-tls
+      hosts:
         - grafana.maxim.local
-      secretName: grafana-tls
 
-grafana:
-  revisionHistoryLimit: 3
-  testFramework:
-    enabled: false
-  ingress:
-    enabled: true
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
-  persistence:
-    type: pvc
-    enabled: true
-    storageClassName: nfs-client
-    accessModes:
-      - ReadWriteOnce
-    size: 2Gi
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Victoria
-          type: prometheus
-          url: http://victoriametrics-victoria-metrics-single-server:8428
-          access: proxy
-          isDefault: true
+testFramework:
+  enabled: false
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1024Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+persistence:
+  enabled: true
+  type: pvc
+  storageClassName: nfs-client
+  accessModes:
+    - ReadWriteOnce
+  size: 2Gi
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Victoria
+        type: prometheus
+        url: http://victoriametrics-victoria-metrics-single-server:8428
+        access: proxy
+        isDefault: true
