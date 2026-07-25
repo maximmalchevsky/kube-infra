@@ -57,7 +57,19 @@ data:
       name: Victoria
       type: prometheus
       url: http://victoriametrics-victoria-metrics-single-server:8428
+  dashboardproviders.yaml: |
+    apiVersion: 1
 
+    providers:
+      - name: default
+        orgId: 1
+        folder: ""
+        type: file
+        disableDeletion: false
+        editable: true
+        updateIntervalSeconds: 10
+        options:
+          path: /var/lib/grafana/dashboards
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -202,6 +214,9 @@ spec:
             - name: config
               mountPath: "/etc/grafana/provisioning/datasources/datasources.yaml"
               subPath: "datasources.yaml"
+            - name: config
+              mountPath: "/etc/grafana/provisioning/dashboards/dashboardproviders.yaml"
+              subPath: "dashboardproviders.yaml"
           ports:
             - name: grafana
               containerPort: 3000
