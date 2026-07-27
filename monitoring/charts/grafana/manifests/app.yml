@@ -180,6 +180,7 @@ spec:
         checksum/sc-dashboard-provider-config: e70bf6a851099d385178a76de9757bb0bef8299da6d8443602590e44f05fdf24
         checksum/secret: bdd891a715131da8e9ee49bbf7b16bdfb75eaa367fcbdcedb0270a97b031223d
         kubectl.kubernetes.io/default-container: grafana
+        reloader.stakater.com/auto: "true"
     spec:
       
       serviceAccountName: monitoring-grafana
