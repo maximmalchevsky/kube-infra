@@ -221,6 +221,9 @@ spec:
             - name: node-exporter-dashboard
               mountPath: "/var/lib/grafana/dashboards/node-exporter.json"
               subPath: "node-exporter.json"
+            - name: nodes-dashboard
+              mountPath: "/var/lib/grafana/dashboards/nodes.json"
+              subPath: "nodes.json"
           ports:
             - name: grafana
               containerPort: 3000
@@ -294,6 +297,9 @@ spec:
         - name: node-exporter-dashboard
           configMap:
             name: node-exporter
+        - name: nodes-dashboard
+          configMap:
+            name: nodes
 
 ---
 # Source: grafana/templates/ingress.yaml
