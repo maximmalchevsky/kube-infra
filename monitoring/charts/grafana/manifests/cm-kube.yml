@@ -1876,7 +1876,7 @@ data:
                     "value": [
                       {
                         "title": "",
-                        "url": "/d/art-deployment/deployment?${datasource:queryparam}&var-namespace=${__data.fields.namespace}&var-deployment_name=${__value.raw}&${__url_time_range}"
+                        "url": "/d/max-deployment/deployment?${datasource:queryparam}&var-namespace=${__data.fields.namespace}&var-deployment_name=${__value.raw}&${__url_time_range}"
                       }
                     ]
                   }
@@ -1982,7 +1982,7 @@ data:
                     "value": [
                       {
                         "title": "",
-                        "url": "/d/art-sts/statefulset?${datasource:queryparam}&var-namespace=${__data.fields.namespace}&var-statefulset_name=${__data.fields.statefulset}&${__url_time_range}"
+                        "url": "/d/max-sts/statefulset?${datasource:queryparam}&var-namespace=${__data.fields.namespace}&var-statefulset_name=${__data.fields.statefulset}&${__url_time_range}"
                       }
                     ]
                   }
@@ -2097,7 +2097,7 @@ data:
                     "value": [
                       {
                         "title": "",
-                        "url": "/d/art-daemonset/daemonset?${datasource:queryparam}&var-namespace=${__data.fields.namespace}&var-daemonset_name=${__data.fields.daemonset}&${__url_time_range}"
+                        "url": "/d/max-daemonset/daemonset?${datasource:queryparam}&var-namespace=${__data.fields.namespace}&var-daemonset_name=${__data.fields.daemonset}&${__url_time_range}"
                       }
                     ]
                   }
@@ -3708,8 +3708,8 @@ data:
       "schemaVersion": 34,
       "style": "dark",
       "tags": [
-        "k8s",
-        "art-dashboards"
+        "kube",
+        "max-dashboards"
       ],
       "templating": {
         "list": [
