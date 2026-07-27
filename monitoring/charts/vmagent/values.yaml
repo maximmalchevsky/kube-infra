@@ -65,6 +65,7 @@ victoria-metrics-agent:
       static_configs:
         - targets: [ 'kube-state-metrics:8080' ]
     - job_name: argocd
+
       kubernetes_sd_configs:
         - role: endpoints
       relabel_configs:
