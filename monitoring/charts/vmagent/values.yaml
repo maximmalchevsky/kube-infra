@@ -4,7 +4,8 @@ victoria-metrics-agent:
     repository: victoriametrics/vmagent
     tag: "v1.148.0"
     pullPolicy: IfNotPresent
-
+  annotations:
+    reloader.stakater.com/auto: "true"
   nameOverride: "vmagent-sys"
   fullnameOverride: "vmagent-sys"
 
@@ -63,3 +64,13 @@ victoria-metrics-agent:
     - job_name: 'kube-state-metrics'
       static_configs:
         - targets: [ 'kube-state-metrics:8080' ]
+    - job_name: argocd
+      kubernetes_sd_configs:
+        - role: endpoints
+      relabel_configs:
+        - source_labels: [ __meta_kubernetes_namespace ]
+          regex: argocd
+          action: keep
+        - source_labels: [ __meta_kubernetes_service_name ]
+          regex: argocd-.*-metrics
+          action: keep
