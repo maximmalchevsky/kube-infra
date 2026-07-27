@@ -65,15 +65,9 @@ victoria-metrics-agent:
       static_configs:
         - targets: [ 'kube-state-metrics:8080' ]
     - job_name: argocd
-
-      kubernetes_sd_configs:
-        - role: endpoints
-      relabel_configs:
-        - source_labels:
-            [ __meta_kubernetes_namespace ]
-          regex: argocd
-          action: keep
-        - source_labels:
-            [ __meta_kubernetes_service_name ]
-          regex: argocd-.*-metrics
-          action: keep
+      static_configs:
+        - targets:
+            - argocd-server-metrics.argocd.svc.cluster.local:8083
+            - argocd-repo-server-metrics.argocd.svc.cluster.local:8084
+            - argocd-application-controller-metrics.argocd.svc.cluster.local:8082
+            - argocd-applicationset-controller-metrics.argocd.svc.cluster.local:8080
