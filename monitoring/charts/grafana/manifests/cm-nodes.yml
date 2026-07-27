@@ -34,10 +34,10 @@ data:
           "keepTime": false,
           "tags": [],
           "targetBlank": false,
-          "title": "Artur Kryukov",
+          "title": "aboba",
           "tooltip": "",
           "type": "link",
-          "url": "https://www.kryukov.biz"
+          "url": "https://aboba.cloud"
         }
       ],
       "liveNow": false,
@@ -335,7 +335,7 @@ data:
                     "value": [
                       {
                         "title": "",
-                        "url": "/d/art-node-exporter/?var-nodename=${__value.raw}"
+                        "url": "/d/max-node-exporter/?var-nodename=${__value.raw}"
                       }
                     ]
                   }
@@ -644,7 +644,7 @@ data:
       "style": "dark",
       "tags": [
         "linux",
-        "art-dashboards"
+        "max-dashboards"
       ],
       "templating": {
         "list": [
