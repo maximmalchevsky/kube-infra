@@ -227,6 +227,9 @@ spec:
             - name: argocd-dashboard
               mountPath: "/var/lib/grafana/dashboards/argocd.json"
               subPath: "argocd.json"
+            - name: kube-dashboard
+              mountPath: "/var/lib/grafana/dashboards/kube.json"
+              subPath: "kube.json"
           ports:
             - name: grafana
               containerPort: 3000
@@ -306,6 +309,9 @@ spec:
         - name: argocd-dashboard
           configMap:
             name: argocd
+        - name: kube-dashboard
+          configMap:
+            name: kube
 
 ---
 # Source: grafana/templates/ingress.yaml
