@@ -224,6 +224,9 @@ spec:
             - name: nodes-dashboard
               mountPath: "/var/lib/grafana/dashboards/nodes.json"
               subPath: "nodes.json"
+            - name: argocd-dashboard
+              mountPath: "/var/lib/grafana/dashboards/argocd.json"
+              subPath: "argocd.json"
           ports:
             - name: grafana
               containerPort: 3000
@@ -300,6 +303,9 @@ spec:
         - name: nodes-dashboard
           configMap:
             name: nodes
+        - name: argocd-dashboard
+          configMap:
+            name: argocd
 
 ---
 # Source: grafana/templates/ingress.yaml
