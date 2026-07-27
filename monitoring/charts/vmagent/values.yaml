@@ -61,25 +61,24 @@ victoria-metrics-agent:
         - source_labels: [ __meta_kubernetes_endpoints_name ]
           regex: 'node-exporter-prometheus-node-exporter'
           action: keep
+
     - job_name: 'kube-state-metrics'
       static_configs:
         - targets: [ 'kube-state-metrics:8080' ]
-    - job_name: argocd-server
+
+    - job_name: argocd-server-metrics
       static_configs:
         - targets:
             - argocd-server-metrics.argocd.svc.cluster.local:8083
-
-    - job_name: argocd-repo-server
+    - job_name: argocd-repo-server-metrics
       static_configs:
         - targets:
             - argocd-repo-server-metrics.argocd.svc.cluster.local:8084
-
-    - job_name: argocd-application-controller
+    - job_name: argocd-application-controller-metrics
       static_configs:
         - targets:
             - argocd-application-controller-metrics.argocd.svc.cluster.local:8082
-
-    - job_name: argocd-applicationset-controller
+    - job_name: argocd-applicationset-controller-metrics
       static_configs:
         - targets:
             - argocd-applicationset-controller-metrics.argocd.svc.cluster.local:8080
