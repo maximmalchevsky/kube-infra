@@ -332,7 +332,7 @@
                 "value": [
                   {
                     "title": "",
-                    "url": "/d/art-node-exporter/?var-nodename=${__value.raw}"
+                    "url": "/d/max-node-exporter/?var-nodename=${__value.raw}"
                   }
                 ]
               }
@@ -641,7 +641,7 @@
   "style": "dark",
   "tags": [
     "linux",
-    "art-dashboards"
+    "max-dashboards"
   ],
   "templating": {
     "list": [
