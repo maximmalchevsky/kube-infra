@@ -1,0 +1,218 @@
+fluent-bit-collector:
+  image:
+    repository: ghcr.io/fluent/fluent-bit
+    tag: 5.0.9
+    pullPolicy: IfNotPresent
+  nameOverride: fluent-bit
+  fullnameOverride: fluent-bit
+
+  serviceAccount:
+    create: true
+
+  rbac:
+    create: true
+    nodeAccess: false
+
+  service:
+    enabled: false
+    annotations: {}
+    httpPort: 2020
+
+  priorityClassName: high-priority
+
+  terminationGracePeriodSeconds: 30
+
+  securityContext:
+    privileged: false
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    runAsNonRoot: false
+    runAsUser: 0
+    runAsGroup: 0
+    capabilities:
+      drop:
+        - ALL
+
+  env: [ ]
+
+  command:
+    - /fluent-bit/bin/fluent-bit
+
+  args: [ ]
+
+  livenessProbe:
+    httpGet:
+      path: /
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 12
+
+  readinessProbe:
+    httpGet:
+      path: /api/v2/health
+      port: http
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    timeoutSeconds: 1
+    successThreshold: 1
+    failureThreshold: 6
+
+  extraVolumes: [ ]
+  extraVolumeMounts: [ ]
+
+  resources:
+    limits:
+      cpu: 200m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+
+  tolerations:
+    - key: node-role.kubernetes.io/master
+      operator: Exists
+      effect: NoSchedule
+    - operator: "Exists"
+      effect: "NoExecute"
+    - operator: "Exists"
+      effect: "NoSchedule"
+
+  hostVolumes:
+    - name: machine-id
+      hostPath:
+        path: /etc/machine-id
+        type: File
+      mountPath: /etc/machine-id
+    - name: logs
+      hostPath:
+        path: /var/log
+        type: Directory
+      mountPath: /var/log
+
+  kubeletEndpoint:
+    enabled: false
+
+  storage:
+    enabled: true
+    hostPath: /var/fluent-bit/data
+
+  config:
+    env: { }
+
+    service:
+      log_level: info
+      http_listen: 0.0.0.0
+
+    plugins: [ ]
+
+    parsersFile: /fluent-bit/etc/parsers.conf
+
+    parsers:
+      - name: kubernetes-tag
+        format: regex
+        regex: ^(?<namespace_name>[^.]+)\.(?<pod_name>[^.]+)\.(?<container_name>[^.]+)
+      - name: sys_log_file
+        format: regex
+        regex: (?<message>(?<time>[^ ]*\s{1,2}[^ ]*\s[^ ]*)\s(?<host>[a-zA-Z0-9_\/\.\-]*)\s.*)$
+        time_format: "%b %d %H:%M:%S"
+        time_keep: false
+        time_key: time
+        time_offset: "+0300"
+
+    multilineParsers: [ ]
+
+    pipeline:
+      inputs:
+        - name: tail
+          alias: k8s-logs
+          path: /var/log/containers/*.log
+          tag_regex: (?<pod_name>[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)_(?<namespace_name>[^_]+)_(?<container_name>.+)-
+          tag: kube.<namespace_name>.<pod_name>.<container_name>
+          read_from_head: true
+          multiline.parser: cri
+          skip_long_lines: true
+          skip_empty_lines: true
+          storage.type: ${STORAGE_TYPE_PREFER_FS}
+          db: ${STORAGE_PATH}/tail.db
+          processors:
+            logs:
+              - name: kubernetes
+                use_kubelet: ${KUBELET_ENDPOINT}
+                kubelet_host: ${NODE_IP}
+                kubelet_port: 10250
+                kube_tag_prefix: kube.
+                regex_parser: kubernetes-tag
+                k8s-logging.parser: true
+                k8s-logging.exclude: true
+
+        - name: tail
+          alias: host-secure
+          tag: host.log.secure
+          parser: sys_log_file
+          path: /var/log/secure
+          storage.type: ${STORAGE_TYPE_PREFER_FS}
+          db: ${STORAGE_PATH}/secure.db
+
+        - name: tail
+          alias: host-messages
+          tag: host.log.messages
+          parser: sys_log_file
+          path: /var/log/messages
+          storage.type: ${STORAGE_TYPE_PREFER_FS}
+          db: ${STORAGE_PATH}/messages.db
+
+        - name: tail
+          alias: host-cron
+          tag: host.log.cron
+          parser: sys_log_file
+          path: /var/log/cron
+          storage.type: ${STORAGE_TYPE_PREFER_FS}
+          db: ${STORAGE_PATH}/cron.db
+
+      filters:
+        - name: modify
+          match: host.log.mail
+          set:
+            - app syslog
+            - file /var/log/mail
+        - name: modify
+          match: host.log.secure
+          set:
+            - app syslog
+            - file /var/log/secure
+        - name: modify
+          match: host.log.messages
+          set:
+            - app syslog
+            - file /var/log/messages
+        - name: modify
+          match: host.log.cron
+          set:
+            - app syslog
+            - file /var/log/cron
+
+      outputs:
+        - name: kafka
+          alias: out-kafka-kube
+          match: kube.*
+          brokers: kafka.kafka.svc:9092
+          topics: kube
+          retry_limit: false
+          storage.total_limit_size: 2G
+
+        - name: kafka
+          alias: out-kafka-host
+          match: host.log.*
+          brokers: kafka.kafka.svc:9092
+          topics: host
+          retry_limit: false
+          storage.total_limit_size: 500M
+
+    upstreamServers: [ ]
+    includes: [ ]
+
+  hotReload:
+    enabled: false
