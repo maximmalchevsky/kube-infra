@@ -1,0 +1,193 @@
+vector:
+  nameOverride: "vector"
+
+  # fullnameOverride -- Override the full name of resources.
+  fullnameOverride: "vector"
+
+  # role -- [Role](https://vector.dev/docs/setup/deployment/roles/) for this Vector instance, valid options are:
+  # "Agent", "Aggregator", and "Stateless-Aggregator".
+
+  # Each role is created with the following workloads:
+  # Agent = DaemonSet
+  # Aggregator = StatefulSet
+  # Stateless-Aggregator = Deployment
+  role: "Stateless-Aggregator"
+
+  rollWorkload: true
+
+  # Define the Vector image to use.
+  # Vector images are available from:
+  #   - Docker Hub: docker.io/timberio/vector
+  #   - GitHub Container Registry: ghcr.io/vectordotdev/vector
+  image:
+    repository: timberio/vector
+    pullPolicy: IfNotPresent
+    tag: "0.57.0-distroless-libc"
+  replicas: 1
+
+  podManagementPolicy: OrderedReady
+
+  autoscaling:
+    enabled: false
+
+  podDisruptionBudget:
+    enabled: false
+
+  rbac:
+    create: true
+
+  psp:
+    create: false
+
+  serviceAccount:
+    create: true
+    annotations: {}
+    name:
+    automountToken: true
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+  service:
+    enabled: true
+    type: "ClusterIP"
+    # service.annotations -- Set annotations on Vector's Service.
+    annotations: {}
+    # service.topologyKeys -- Specify the [topologyKeys](https://kubernetes.io/docs/concepts/services-networking/service-topology/#using-service-topology)
+    # field on Vector's Service.
+    topologyKeys: []
+    #   - "kubernetes.io/hostname"
+    #   - "topology.kubernetes.io/zone"
+    #   - "topology.kubernetes.io/region"
+    #   - "*"
+    # service.ports -- Manually set the Service ports, overriding automated generation of Service ports.
+    ports: []
+
+
+  ingress:
+    # ingress.enabled -- If true, create and use an Ingress resource.
+    enabled: false
+    # ingress.className -- Specify the [ingressClassName](https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress),
+    # requires Kubernetes >= 1.18
+    className: ""
+    # ingress.annotations -- Set annotations on the Ingress.
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    # ingress.hosts -- Configure the hosts and paths for the Ingress.
+    hosts: []
+    #  - host: chart-example.local
+    #    paths:
+    #      - path: /
+    #        pathType: ImplementationSpecific
+    #        # Specify the port name or number on the Service
+    #        # Using name requires Kubernetes >=1.19
+    #        port:
+    #          name: ""
+    #          number: ""
+    # ingress.tls -- Configure TLS for the Ingress.
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  # existingConfigMaps -- List of existing ConfigMaps for Vector's configuration instead of creating a new one. Requires
+  # dataDir to be set. Additionally, containerPorts, service.ports, and serviceHeadless.ports should be specified based on
+  # your supplied configuration. If set, this parameter takes precedence over customConfig and the chart's default configs.
+  customConfig:
+    data_dir: /vector-data-dir
+    api:
+      enabled: true
+      address: "0.0.0.0:8686"
+      playground: false
+    sources:
+      kafka-kube:
+        type: "kafka"
+        bootstrap_servers: "kafka:9092"
+        group_id: "loggers"
+        key_field: "message_key"
+        topics:
+          - kube
+      kafka-host:
+        type: "kafka"
+        bootstrap_servers: "kafka:9092"
+        group_id: "loggers"
+        key_field: "message_key"
+        topics:
+          - host
+    transforms:
+      transform-kube:
+        type: remap
+        inputs:
+          - kafka-kube
+        timezone: local
+        source: |-
+          . = parse_json!(.message)
+          del(._p)
+          del(."@timestamp")
+          #del(.kubernetes.labels)
+          #del(.kubernetes.annotations)
+          if ! is_null(.kubernetes.labels) { 
+            .kubernetes.labels = map_keys(value: object!(.kubernetes.labels)) -> |key| {replace(key, ".", "_")}
+          }
+          if ! is_null(.kubernetes.annotations) {
+            .kubernetes.annotations = map_keys(value: object!(.kubernetes.annotations)) -> |key| {replace(key, ".", "_")}
+          }
+
+      transform-host:
+        type: remap
+        inputs:
+          - kafka-host
+        timezone: local
+        source: |-
+          . = parse_json!(.message)
+          .timestamp, err = to_timestamp(."@timestamp")
+          del(."@timestamp")
+
+    sinks:
+      es-kube:
+        inputs:
+          - transform-kube
+        type: elasticsearch
+        endpoint: "https://192.168.89.31:9200"
+        suppress_type_name: true
+        bulk:
+          action: "create"
+          index: 'kube-%Y-%m-%d'
+        tls:
+          verify_certificate: false
+        auth:
+          user: admin
+          password: <path:secret/data/logging/opensearch#password>
+          strategy: basic
+      es-host:
+        inputs:
+          - transform-host
+        type: elasticsearch
+        endpoint: "https://192.168.89.31:9200"
+        suppress_type_name: true
+        bulk:
+          action: "create"
+          index: 'host-%Y-%m-%d'
+        tls:
+          verify_certificate: false
+        auth:
+          user: admin
+          password: <path:secret/data/logging/opensearch#password>
+          strategy: basic
+
+  persistence:
+    enabled: true
+    storageClassName: nfs-client
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+    finalizers:
+      - kubernetes.io/pvc-protection
+
+
