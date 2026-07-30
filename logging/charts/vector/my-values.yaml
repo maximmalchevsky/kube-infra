@@ -145,7 +145,7 @@ vector:
         timezone: local
         source: |-
           . = parse_json!(.message)
-          .timestamp, err = to_timestamp(."@timestamp")
+          .timestamp, err = parse_timestamp(."@timestamp", format: "%+")
           del(."@timestamp")
 
     sinks:
