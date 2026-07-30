@@ -32,7 +32,7 @@ kafka:
 
     heapOpts: -Xmx1024m -Xms1024m   # ключевой фикс — именно controller.heapOpts, не верхнеуровневый
 
-    config:
+    overrideConfiguration:
       delete.topic.enable: true
       auto.create.topics.enable: false
       log.flush.interval.messages: 10000
