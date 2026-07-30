@@ -1,9 +1,10 @@
 apiVersion: v2
-name: kafka
-description: A Apache Kafka Helm chart for Kubernetes
+name: kafka-art
+description: Kafka chart for ArgoCD
 type: application
-version: 1.0.0
+version: 0.1.0
 dependencies:
   - name: kafka
-    version: 32.4.3
+    condition: kafka.enabled
     repository: https://charts.bitnami.com/bitnami
+    version: 21.1.1
