@@ -147,6 +147,7 @@ fluent-bit-collector:
                 regex_parser: kubernetes-tag
                 k8s-logging.parser: true
                 k8s-logging.exclude: true
+                buffer_size: 256k
 
         - name: tail
           alias: host-secure
