@@ -1,0 +1,9 @@
+apiVersion: v2
+name: kafka
+description: A Apache Kafka Helm chart for Kubernetes
+type: application
+version: 1.0.0
+dependencies:
+  - name: kafka
+    version: 32.4.3
+    repository: https://charts.bitnami.com/bitnami
