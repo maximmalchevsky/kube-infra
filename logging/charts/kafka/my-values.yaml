@@ -29,6 +29,7 @@ kafka:
   controller:
     replicaCount: 2   # см. примечание про кворум ниже — лучше 3
     controllerOnly: false   # combined controller+broker, как было в старом плоском конфиге
+    heapOpts: -Xmx1024m -Xms1024m
 
     config:
       delete.topic.enable: true
