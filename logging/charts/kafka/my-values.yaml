@@ -26,6 +26,9 @@ kafka:
   controller:
     replicaCount: 3   # 2 ломает кворум при падении одной ноды, обсуждали
     controllerOnly: false
+    extraEnvVars:
+      - name: BITNAMI_DEBUG
+        value: "true"
 
     heapOpts: -Xmx1024m -Xms1024m   # ключевой фикс — именно controller.heapOpts, не верхнеуровневый
 
