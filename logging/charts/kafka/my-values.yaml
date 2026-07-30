@@ -89,7 +89,7 @@ kafka:
 
     persistence:
       enabled: true
-      storageClass: "nfs-сlient"
+      storageClass: "nfs-client"
       accessModes:
         - ReadWriteOnce
       size: 8Gi
@@ -102,7 +102,7 @@ kafka:
     type: NodePort
     ports:
       client: 9092
-      interbroker: 9094   # см. примечание про порты ниже
+      interbroker: 9094
     nodePorts:
       client: "32092"
       external: ""
