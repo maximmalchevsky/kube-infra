@@ -97,6 +97,10 @@ kafka:
   defaultInitContainers:
     volumePermissions:
       enabled: true   # эквивалент старого корневого volumePermissions.enabled: true
+      image:
+        registry: docker.io
+        repository: bitnamilegacy/os-shell
+        tag: 12-debian-12-r51
 
   service:
     type: NodePort
