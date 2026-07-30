@@ -198,7 +198,7 @@ fluent-bit-collector:
         - name: kafka
           alias: out-kafka-kube
           match: kube.*
-          brokers: kafka.kafka.svc:9092
+          brokers: kafka.logging.svc.cluster.local:9092
           topics: kube
           retry_limit: false
           storage.total_limit_size: 2G
@@ -206,7 +206,7 @@ fluent-bit-collector:
         - name: kafka
           alias: out-kafka-host
           match: host.log.*
-          brokers: kafka.kafka.svc:9092
+          brokers: kafka.logging.svc.cluster.local:9092
           topics: host
           retry_limit: false
           storage.total_limit_size: 500M
