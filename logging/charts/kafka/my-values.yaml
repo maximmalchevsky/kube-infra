@@ -96,7 +96,7 @@ kafka:
 
   defaultInitContainers:
     volumePermissions:
-      enabled: false   # эквивалент старого корневого volumePermissions.enabled: true
+      enabled: true   # эквивалент старого корневого volumePermissions.enabled: true
       image:
         registry: docker.io
         repository: bitnamilegacy/os-shell
