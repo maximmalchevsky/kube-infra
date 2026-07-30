@@ -104,7 +104,6 @@ vector:
     api:
       enabled: true
       address: "0.0.0.0:8686"
-      playground: false
     sources:
       kafka-kube:
         type: "kafka"
