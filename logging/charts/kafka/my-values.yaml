@@ -119,3 +119,7 @@ kafka:
       service:
         ports:
           metrics: 5556
+      image:
+        registry: docker.io
+        repository: bitnamilegacy/jmx-exporter
+        tag: 1.4.0-debian-12-r0
