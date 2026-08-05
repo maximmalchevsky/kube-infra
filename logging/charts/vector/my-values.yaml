@@ -50,8 +50,8 @@ vector:
       cpu: 200m
       memory: 256Mi
     limits:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 500m
+      memory: 512Mi
 
   service:
     enabled: true
@@ -153,7 +153,7 @@ vector:
         inputs:
           - transform-kube
         type: elasticsearch
-        endpoint: "https://192.168.89.31:9200"
+        endpoint: "https://192.ку168.89.31:9200"
         suppress_type_name: true
         bulk:
           action: "create"
