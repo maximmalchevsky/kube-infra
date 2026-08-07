@@ -1,0 +1,113 @@
+kafka:
+  global:
+    defaultStorageClass: "nfs-client"   # проверьте латиницу ещё раз перед сохранением
+
+  nameOverride: "kafka"
+  fullnameOverride: "kafka"
+
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/kafka
+    tag: 4.0.0-debian-12-r10
+    pullPolicy: IfNotPresent
+    debug: false
+
+  # без этого fluent-bit с обычным kafka-output не подключится
+  listeners:
+    client:
+      protocol: PLAINTEXT
+    controller:
+      protocol: PLAINTEXT
+    interbroker:
+      protocol: PLAINTEXT
+    external:
+      protocol: PLAINTEXT
+
+  controller:
+    replicaCount: 3   # 2 ломает кворум при падении одной ноды, обсуждали
+    controllerOnly: false
+    extraEnvVars:
+      - name: BITNAMI_DEBUG
+        value: "true"
+
+    heapOpts: -Xmx1024m -Xms1024m   # ключевой фикс — именно controller.heapOpts, не верхнеуровневый
+
+    overrideConfiguration:
+      delete.topic.enable: true
+      auto.create.topics.enable: true
+      log.flush.interval.messages: 10000
+      log.flush.interval.ms: 1000
+      log.retention.bytes: 1073741824
+      log.retention.check.interval.ms: 300000
+      log.retention.hours: 6
+      log.segment.bytes: 1073741824
+      message.max.bytes: 1000012
+      default.replication.factor: 1
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      num.io.threads: 8
+      num.network.threads: 3
+      num.partitions: 2
+      num.recovery.threads.per.data.dir: 1
+      socket.receive.buffer.bytes: 102400
+      socket.request.max.bytes: 104857600
+      socket.send.buffer.bytes: 102400
+      allow.everyone.if.no.acl.found: true
+      super.users: User:admin
+
+    resources:
+      requests:
+        memory: 1024Mi
+        cpu: 500m
+      limits:
+        memory: 1536Mi   # с запасом сверх heap под off-heap/JVM overhead
+
+    podSecurityContext:
+      enabled: true
+      fsGroup: 1001
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1001
+      runAsNonRoot: true
+
+    podAntiAffinityPreset: soft   # soft, не hard — на 3 нодах и 3 репликах hard может не найти место, если под тестовый кластер меньше 3 воркеров
+    podManagementPolicy: Parallel
+
+    persistence:
+      enabled: true
+      storageClass: "nfs-client"
+      accessModes:
+        - ReadWriteOnce
+      size: 8Gi
+
+    priorityClassName: ""   # проверьте, существует ли "high-priority" в кластере, иначе не трогайте
+
+  defaultInitContainers:
+    volumePermissions:
+      enabled: true   # теперь должно работать — root_squash на NFS уже починили
+      image:
+        registry: docker.io
+        repository: bitnamilegacy/os-shell
+        tag: 12-debian-12-r51
+
+  service:
+    type: NodePort
+    ports:
+      client: 9092
+      interbroker: 9094
+    nodePorts:
+      client: "32092"
+    sessionAffinity: None
+    externalTrafficPolicy: Cluster
+
+  metrics:
+    jmx:
+      enabled: true
+      image:
+        registry: docker.io
+        repository: bitnamilegacy/jmx-exporter
+        tag: 1.4.0-debian-12-r0
+      service:
+        ports:
+          metrics: 5556

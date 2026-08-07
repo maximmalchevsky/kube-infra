@@ -180,6 +180,7 @@ spec:
         checksum/sc-dashboard-provider-config: e70bf6a851099d385178a76de9757bb0bef8299da6d8443602590e44f05fdf24
         checksum/secret: bdd891a715131da8e9ee49bbf7b16bdfb75eaa367fcbdcedb0270a97b031223d
         kubectl.kubernetes.io/default-container: grafana
+        reloader.stakater.com/auto: "true"
     spec:
       
       serviceAccountName: monitoring-grafana
@@ -220,6 +221,15 @@ spec:
             - name: node-exporter-dashboard
               mountPath: "/var/lib/grafana/dashboards/node-exporter.json"
               subPath: "node-exporter.json"
+            - name: nodes-dashboard
+              mountPath: "/var/lib/grafana/dashboards/nodes.json"
+              subPath: "nodes.json"
+            - name: argocd-dashboard
+              mountPath: "/var/lib/grafana/dashboards/argocd.json"
+              subPath: "argocd.json"
+            - name: kube-dashboard
+              mountPath: "/var/lib/grafana/dashboards/kube.json"
+              subPath: "kube.json"
           ports:
             - name: grafana
               containerPort: 3000
@@ -293,6 +303,15 @@ spec:
         - name: node-exporter-dashboard
           configMap:
             name: node-exporter
+        - name: nodes-dashboard
+          configMap:
+            name: nodes
+        - name: argocd-dashboard
+          configMap:
+            name: argocd
+        - name: kube-dashboard
+          configMap:
+            name: kube
 
 ---
 # Source: grafana/templates/ingress.yaml
